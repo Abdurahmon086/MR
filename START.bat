@@ -90,7 +90,8 @@ if not exist "venv\Scripts\activate.bat" (
 
 echo  Kutubxonalar o'rnatilmoqda (birinchi marta 5-10 daqiqa)...
 venv\Scripts\pip install -q --upgrade pip
-venv\Scripts\pip install -q -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+venv\Scripts\pip install -q -r requirements.txt
+venv\Scripts\pip install -q torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 if not exist "uploads" mkdir uploads
 if not exist "ai_models" mkdir ai_models
