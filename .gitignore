@@ -4,7 +4,8 @@ backend/__pycache__/
 backend/**/__pycache__/
 backend/**/*.pyc
 backend/.env
-backend/uploads/
+backend/uploads
+backend/uvicorn.log
 backend/ai_models/
 backend/logs/
 *.egg-info/
