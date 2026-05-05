@@ -1,0 +1,81 @@
+{
+  "app": { "title": "Dermatological Diagnosis System", "subtitle": "Skin disease diagnostics" },
+  "auth": {
+    "login": "Sign In", "email": "Email address", "password": "Password",
+    "loginBtn": "Sign In", "logout": "Sign Out", "loginError": "Invalid email or password"
+  },
+  "menu": {
+    "dashboard": "Dashboard", "patients": "Patients", "diagnoses": "Diagnoses",
+    "aiAnalysis": "AI Analysis", "reports": "Reports", "appointments": "Appointments", "admin": "Admin"
+  },
+  "dashboard": {
+    "title": "Dashboard", "totalPatients": "Total Patients", "totalDiagnoses": "Total Diagnoses",
+    "aiAnalyses": "AI Analyses", "todayAppointments": "Today's Appointments",
+    "newThisMonth": "New Patients This Month", "recentActivity": "Recent Activity",
+    "classDist": "AI Diagnosis Distribution", "ageDist": "Age Distribution"
+  },
+  "patients": {
+    "title": "Patients", "add": "Add Patient", "search": "Search (name, code, phone)...",
+    "code": "Patient Code", "fullName": "Full Name", "birthDate": "Date of Birth", "age": "Age",
+    "gender": "Gender", "phone": "Phone", "region": "Region", "doctor": "Doctor",
+    "male": "Male", "female": "Female", "actions": "Actions", "edit": "Edit",
+    "delete": "Delete", "deleteConfirm": "Delete this patient?",
+    "noPatients": "No patients found", "info": "Basic Information",
+    "allergies": "Allergies", "chronicDiseases": "Chronic Diseases",
+    "assignedDoctor": "Assigned Doctor", "notes": "Notes",
+    "saveSuccess": "Patient saved", "updateSuccess": "Patient updated"
+  },
+  "diagnoses": {
+    "title": "Diagnoses", "add": "New Diagnosis", "code": "Diagnosis Code",
+    "visitDate": "Visit Date", "complaint": "Chief Complaint", "diagnosisText": "Diagnosis",
+    "severity": "Severity", "status": "Status", "treatment": "Treatment Plan",
+    "followUp": "Follow-up Date", "icd10": "ICD-10 Code",
+    "mild": "Mild", "moderate": "Moderate", "severe": "Severe", "critical": "Critical",
+    "initial": "Initial", "confirmed": "Confirmed", "revised": "Revised", "closed": "Closed",
+    "aiAssisted": "AI Assisted"
+  },
+  "ai": {
+    "title": "AI Analysis", "uploadImage": "Upload skin image",
+    "uploadHint": "JPEG, PNG formats. Maximum 20MB",
+    "selectPatient": "Select patient", "analyze": "Analyze",
+    "analyzing": "Analyzing...", "result": "Analysis Result",
+    "confidence": "Confidence", "allProbs": "All class probabilities",
+    "riskLevel": "Risk Level", "icd10": "ICD-10 Code", "description": "Description",
+    "agreeBtn": "I Agree", "disagreeBtn": "I Disagree", "doctorNotes": "Doctor notes",
+    "submitReview": "Save Review",
+    "risk": {
+      "critical": "CRITICAL RISK — See doctor immediately!",
+      "high": "High Risk — See a specialist",
+      "medium": "Medium Risk — Monitor closely",
+      "low": "Low Risk — Observe"
+    },
+    "classes": {
+      "mel": "Melanoma", "nv": "Melanocytic Nevi", "bcc": "Basal Cell Carcinoma",
+      "akiec": "Actinic Keratoses", "bkl": "Benign Keratosis", "df": "Dermatofibroma", "vasc": "Vascular Lesions"
+    },
+    "noModel": "AI model not loaded (demo mode)"
+  },
+  "reports": {
+    "title": "Reports", "generate": "Generate Report", "download": "Download",
+    "type": "Report Type", "patientSummary": "Patient Summary", "statistics": "Statistics",
+    "generating": "Generating...", "ready": "Ready", "failed": "Failed",
+    "selectPatient": "Select patient", "dateRange": "Date Range"
+  },
+  "appointments": {
+    "title": "Appointments", "add": "Add Appointment", "scheduled": "Scheduled",
+    "confirmed": "Confirmed", "completed": "Completed", "cancelled": "Cancelled",
+    "initial": "Initial", "follow_up": "Follow-up", "today": "Today's Appointments"
+  },
+  "admin": {
+    "title": "Administration", "users": "Users", "addUser": "Add User",
+    "role": "Role", "admin": "Admin", "doctor": "Doctor", "nurse": "Nurse"
+  },
+  "common": {
+    "save": "Save", "cancel": "Cancel", "close": "Close", "back": "Back",
+    "edit": "Edit", "delete": "Delete", "add": "Add",
+    "loading": "Loading...", "error": "An error occurred", "success": "Success",
+    "confirm": "Confirm", "total": "Total", "actions": "Actions", "view": "View",
+    "noData": "No data", "required": "Required field",
+    "uzbek": "O'zbek", "russian": "Русский", "english": "English"
+  }
+}

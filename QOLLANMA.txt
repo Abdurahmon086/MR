@@ -1,0 +1,584 @@
+================================================================
+   DERMATOLOGIK TASHXIS AXBOROT TIZIMI — TO'LIQ QOLLANMA
+================================================================
+Versiya: 1.0 | Sana: 2026 | Diplom ishi loyihasi
+================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 1. TIZIM HAQIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Bu tizim dermatologik kasalliklarni tashxis qilish, bemor
+ma'lumotlarini saqlash va AI yordamida teri rasmlarini tahlil
+qilish uchun mo'ljallangan to'liq axborot tizimi.
+
+TEXNOLOGIYALAR:
+  Backend  : Python 3.14 + FastAPI + PostgreSQL 16
+  Frontend : Next.js 14 + TypeScript + Ant Design 5
+  AI Model : BiT-ResNet50 (HuggingFace) + Dermoskopik tahlil
+  Auth     : JWT (access 60 daqiqa + refresh 30 kun)
+  PDF      : ReportLab (o'zbek/rus/ingliz)
+
+LOYHA PAPKASI TUZILMASI:
+  MR/
+  ├── backend/              ← Python FastAPI backend
+  │   ├── app/
+  │   │   ├── main.py       ← Asosiy server fayli
+  │   │   ├── config.py     ← Sozlamalar (.env o'qiydi)
+  │   │   ├── database.py   ← PostgreSQL ulanish
+  │   │   ├── models/       ← 8 ta database modeli
+  │   │   ├── routers/      ← 9 ta API router
+  │   │   ├── schemas/      ← Pydantic validatsiya
+  │   │   ├── services/     ← PDF generatsiya
+  │   │   └── ai/           ← AI tahlil moduli
+  │   ├── alembic/          ← Database migratsiyalar
+  │   ├── uploads/          ← Yuklangan rasmlar
+  │   ├── .env              ← Maxfiy sozlamalar
+  │   ├── seed.py           ← Test ma'lumotlar
+  │   └── requirements.txt
+  ├── frontend/             ← Next.js frontend
+  │   ├── src/
+  │   │   ├── app/          ← Sahifalar (App Router)
+  │   │   ├── components/   ← UI komponentlar
+  │   │   ├── lib/api.ts    ← Backend API ulanish
+  │   │   ├── store/        ← Zustand holat boshqaruvi
+  │   │   └── types/        ← TypeScript turlar
+  │   └── public/locales/   ← Tarjimalar (uz/ru/en)
+  ├── start-backend.bat     ← Backend ishga tushirish
+  ├── start-frontend.bat    ← Frontend ishga tushirish
+  ├── setup-database.bat    ← Database sozlash
+  └── QOLLANMA.txt          ← Shu fayl
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 2. ISHGA TUSHIRISH (BIRINCHI MARTA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TALAB QILINADIGAN DASTURLAR:
+  [1] Python 3.10+   → python --version
+  [2] Node.js 18+    → node --version
+  [3] PostgreSQL 16  → services.msc dan "postgresql" ni ishga tushiring
+
+QADAM 1 — Database yaratish:
+  pgAdmin yoki psql da:
+    CREATE DATABASE dermatology_db;
+
+QADAM 2 — Database sozlash:
+  setup-database.bat faylini 2 marta bosing
+  (migratsiya + 50 ta test bemor yuklanadi)
+
+QADAM 3 — Backend ishga tushirish:
+  start-backend.bat faylini 2 marta bosing
+  Birinchi marta ~2-3 daqiqa kutadi (AI model yuklanadi)
+  Tayyor bo'lganda: "Application startup complete" ko'rinadi
+
+QADAM 4 — Frontend ishga tushirish:
+  start-frontend.bat faylini 2 marta bosing
+  Birinchi marta npm install ishlaydi (~1 daqiqa)
+
+QADAM 5 — Brauzerda ochish:
+  http://localhost:3000  ← Asosiy sayt
+  http://localhost:8000/docs ← API hujjati (Swagger)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 3. LOGIN MA'LUMOTLARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ROL         EMAIL                 PAROL
+  ─────────────────────────────────────────────
+  Admin       admin@derm.uz         Admin1234!
+  Shifokor 1  doctor1@derm.uz       Doctor123!
+  Shifokor 2  doctor2@derm.uz       Doctor123!
+  Hamshira    nurse1@derm.uz        Nurse123!
+
+  Admin:    Barcha funksiyalarga kirish
+  Shifokor: Bemorlar, tashxis, AI tahlil, hisobotlar
+  Hamshira: Bemorlar ro'yxatini ko'rish
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 4. TIZIM FUNKSIYALARI VA ISHLATISH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────
+ 4.1 BOSH SAHIFA (Dashboard)
+────────────────────────────────────
+URL: http://localhost:3000/dashboard
+
+Ko'rinadigan ma'lumotlar:
+  • Jami bemorlar soni
+  • Jami tashxislar soni
+  • Jami AI tahlillar soni
+  • Bugungi qabullar soni
+  • Bu oy yangi bemorlar
+
+Grafiklar:
+  • AI tashxis taqsimoti (doira grafik)
+    → Qaysi kasallik ko'p tashxis qilingani ko'rinadi
+  • Yosh taqsimoti (ustun grafik)
+    → Bemorlarning yosh guruhlari
+
+Bugungi qabullar jadvalida:
+  → Bemor ismi, vaqt, holat ko'rinadi
+
+Oxirgi faoliyat lentasi:
+  → Kim nima qilgani real vaqtda ko'rinadi
+
+────────────────────────────────────
+ 4.2 BEMORLAR BO'LIMI
+────────────────────────────────────
+URL: http://localhost:3000/patients
+
+BEMORLAR RO'YXATI:
+  • Qidirish: Ism, kod yoki telefon bo'yicha
+  • Filterlash: Viloyat, shifokor bo'yicha
+  • Ustunlar: Kod, F.I.O., Yoshi, Jinsi, Telefon, Viloyat, Shifokor
+  • "Ko'rish" tugmasi → Bemor profili
+
+YANGI BEMOR QO'SHISH:
+  "Bemor qo'shish" tugmasini bosing, to'ldiring:
+  Majburiy: Familiya, Ismi, Tug'ilgan sana, Jinsi
+  Ixtiyoriy: Otasining ismi, Qon guruhi, Telefon, Email,
+             Viloyat, Tuman, Manzil, Pasport, INN, Shifokor
+  Saqlanganda bemor kodi avtomatik yaratiladi: PAT-2026-NNNNN
+
+BEMOR PROFILI (detail sahifa):
+  "Asosiy ma'lumotlar" tab:
+    → Barcha shaxsiy ma'lumotlar, allergiyalar, kasalliklar
+  "Tashxislar" tab:
+    → Bemorning barcha tashxislari vaqt bo'yicha
+    → Yangi tashxis qo'shish tugmasi
+  Tugmalar:
+    → "AI Tahlil" → AI tahlil sahifasiga o'tadi
+    → "Tahrirlash" → Ma'lumotlarni o'zgartirish
+
+────────────────────────────────────
+ 4.3 TASHXISLAR BO'LIMI
+────────────────────────────────────
+URL: http://localhost:3000/diagnoses
+
+TASHXISLAR RO'YXATI:
+  • Filterlash: Og'irlik darajasi, Holati bo'yicha
+  • Ustunlar: Kod, Sana, Tashxis matni, ICD-10, Og'irlik, Holat
+  • "Ko'rish" tugmasi → Tashxis tafsiloti
+
+YANGI TASHXIS QO'SHISH:
+  URL: /diagnoses/new  (yoki bemor profilidan)
+  Majburiy: Bemor, Qabul sanasi, Shikoyat, Tashxis matni
+  Ixtiyoriy: ICD-10 kod, Og'irlik darajasi, Anamnez,
+             Davolash rejasi, Keyingi qabul sanasi
+  Tashxis kodi avtomatik yaratiladi: DX-2026-NNNNN
+
+TASHXIS TAFSILOTI:
+  Chapda:
+    → Barcha tashxis ma'lumotlari jadvalda
+    → Shikoyat, anamnez, davolash rejasi matni
+    → Teri rasmlari galereyasi (yuklangan bo'lsa)
+  O'ngda:
+    → AI tahlil natijalari (rasm yuklangan bo'lsa)
+    → Ishonch darajasi grafigi (7 sinf)
+    → Doktor tasdiqlash tugmalari
+
+  Tugmalar:
+    → "PDF Hisobot" → Bemor xulosasi PDF yuklanadi
+    → "Tahrirlash" → Modal oynada o'zgartirish
+
+OG'IRLIK DARAJASI RANGLARI:
+  Yashil  = Yengil (mild)
+  To'q sariq = O'rtacha (moderate)
+  Qizil   = Og'ir (severe)
+  Binafsha = Juda og'ir (critical)
+
+────────────────────────────────────
+ 4.4 AI TAHLIL BO'LIMI
+────────────────────────────────────
+URL: http://localhost:3000/ai-analysis
+
+ISHLATISH TARTIBI:
+  [1] Bemorni tanlang (qidirish orqali)
+  [2] Teri rasmini yuklang (JPEG, PNG, BMP — max 20MB)
+      → Rasmni tortib tashlash yoki "Yuklash" tugmasi
+  [3] "Tahlil qilish" tugmasini bosing
+  [4] Natijani kuting (1-5 soniya)
+
+NATIJA KO'RINISHI:
+  Yuqorida: Xavf darajasi tegi (Past/O'rtacha/Xavfli/Juda xavfli)
+  Katta bloK: Aniqlangan kasallik nomi + ICD-10 kod + tavsif
+  Ishonch darajasi: 0-100% progress bar
+  Barcha 7 sinf: Har biri uchun ehtimollik foizi
+
+  Kasallik sinflari:
+    mel   = Melanoma (KRITIK — darhol shifokorga!)
+    bcc   = Bazal hujayra karsinomasi (XAVFLI)
+    akiec = Aktinik keratoz (XAVFLI)
+    vasc  = Qon-tomir shikastlanishi (O'RTACHA)
+    bkl   = Xavfsiz keratoz (PAST)
+    df    = Dermatofibroma (PAST)
+    nv    = Melanositar nevus/xollar (PAST)
+
+DOKTOR BAHOLASHI:
+  Natijani ko'rib "Roziman" yoki "Rozimas" bosing
+  Izoh yozing (ixtiyoriy)
+  → Tasdiqlangandan keyin yashil banner ko'rinadi
+  → "O'zgartirish" tugmasi bilan qayta baholash mumkin
+
+MUHIM ESLATMA:
+  AI natijasi yordam vositasi — yakuniy tashxis
+  faqat mutaxassis shifokor tomonidan qo'yilishi kerak!
+
+────────────────────────────────────
+ 4.5 HISOBOTLAR BO'LIMI
+────────────────────────────────────
+URL: http://localhost:3000/reports
+
+HISOBOT YARATISH:
+  [1] Hisobot turini tanlang:
+      • "Bemor xulosasi" → 1 ta bemor uchun to'liq PDF
+      • "Statistika" → Umumiy statistika PDF
+  [2] Bemor xulosasi uchun bemorni tanlang
+  [3] "Hisobot yaratish" tugmasini bosing
+  [4] Jadvalda "Tayyor" holati ko'ringanda yuklab oling
+
+PDF TARKIBI (Bemor xulosasi):
+  → Bemor shaxsiy ma'lumotlari
+  → Tashxislar tarixi (barcha tashxislar)
+  → ICD-10 kodlar va davolash rejalari
+  → Hisobot sanasi
+
+HOLAT RANGLARI:
+  Kulrang    = Kutilmoqda
+  Ko'k aylanma = Yaratilmoqda
+  Yashil     = Tayyor (yuklab olish mumkin)
+  Qizil      = Xato yuz berdi
+
+────────────────────────────────────
+ 4.6 QABULLAR BO'LIMI
+────────────────────────────────────
+URL: http://localhost:3000/appointments
+
+  → Bugungi va kelgusi qabullar jadvali
+  → Yangi qabul qo'shish
+  → Holat: Rejalashtirilgan / Tasdiqlangan / Tugallangan
+
+────────────────────────────────────
+ 4.7 ADMIN BO'LIMI (Faqat Admin)
+────────────────────────────────────
+URL: http://localhost:3000/admin
+
+  → Foydalanuvchilar ro'yxati
+  → Yangi shifokor/hamshira qo'shish
+  → Foydalanuvchini o'chirish
+
+TIL ALMASHTIRISH (o'ng yuqorida):
+  O'zbek → Ruscha → Inglizcha
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 5. DATABASE TUZILMASI (8 ta jadval)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  users          → Foydalanuvchilar (admin/doctor/nurse)
+  patients       → Bemorlar (50 ta test bemor)
+  diagnoses      → Tashxislar (64 ta test tashxis)
+  skin_images    → Teri rasmlari (yuklangan fayllar)
+  ai_results     → AI tahlil natijalari
+  appointments   → Qabullar jadvali
+  audit_logs     → Barcha amallar tarixi
+  reports        → Yaratilgan PDF hisobotlar
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 6. API ENDPOINTLARI (Backend)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Swagger UI: http://localhost:8000/docs
+ReDoc:      http://localhost:8000/redoc
+
+ASOSIY ENDPOINTLAR:
+  POST /api/v1/auth/login           → Kirish (JWT olish)
+  POST /api/v1/auth/refresh         → Token yangilash
+  GET  /api/v1/auth/me              → Joriy foydalanuvchi
+
+  GET  /api/v1/patients             → Bemorlar ro'yxati
+  POST /api/v1/patients             → Yangi bemor
+  GET  /api/v1/patients/{id}        → Bemor profili
+  PATCH /api/v1/patients/{id}       → Bemorni yangilash
+
+  GET  /api/v1/diagnoses            → Tashxislar ro'yxati
+  POST /api/v1/diagnoses            → Yangi tashxis
+  GET  /api/v1/diagnoses/{id}       → Tashxis tafsiloti
+  PATCH /api/v1/diagnoses/{id}      → Tashxisni yangilash
+
+  POST /api/v1/images/upload        → Rasm yuklash
+  GET  /api/v1/images/{id}/download → Rasmni yuklab olish
+
+  POST /api/v1/ai/analyze           → AI tahlil boshlash
+  GET  /api/v1/ai/results/{id}      → Tahlil natijasi
+  PATCH /api/v1/ai/results/{id}/review → Doktor baholashi
+  GET  /api/v1/ai/statistics        → AI statistika
+  GET  /api/v1/ai/model-info        → Model ma'lumoti
+
+  GET  /api/v1/dashboard/stats      → Dashboard raqamlar
+  GET  /api/v1/dashboard/charts/diagnoses-by-class
+  GET  /api/v1/dashboard/charts/age-distribution
+  GET  /api/v1/dashboard/appointments/today
+
+  POST /api/v1/reports/generate     → Hisobot yaratish
+  GET  /api/v1/reports/{id}/download → PDF yuklab olish
+
+AUTHENTICATION:
+  Barcha so'rovlarga Header qo'shing:
+    Authorization: Bearer <access_token>
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 7. AI MODEL HAQIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODEL: Fu-chiang/bit-50-skin-lesions (BiT ResNet-50)
+       + Dermoskopik rang/tekstura tahlili
+
+DATASET: HAM10000 (10,015 ta dermoskopik rasm, 7 sinf)
+
+  Sinf  | Nomi                      | ICD-10 | Xavf
+  ──────────────────────────────────────────────────
+  mel   | Melanoma                  | C43    | KRITIK
+  bcc   | Bazal hujayra karsinomasi | C44    | YUQORI
+  akiec | Aktinik keratoz           | L57.0  | YUQORI
+  vasc  | Qon-tomir shikastlanishi  | D18    | O'RTACHA
+  bkl   | Xavfsiz keratoz           | L82    | PAST
+  df    | Dermatofibroma            | D23    | PAST
+  nv    | Melanositar nevus (xollar)| D22    | PAST
+
+MODEL ISHLASH TARTIBI:
+  1. Yuklangan rasm preprocessing (224x224 pixel)
+  2. BiT ResNet-50 → 3 asosiy sinf ehtimolligi
+  3. Dermoskopik rang tahlili → 4 qo'shimcha sinf
+  4. Birlashtirish va normalizatsiya → 7 sinf natija
+  5. Ishonch darajasi, xavf darajasi, ICD-10 qaytariladi
+
+ANIQLIK:
+  Haqiqiy dermoskopik rasmlarda yaxshi natija beradi.
+  Oddiy fotografiyalar uchun aniqlik pasayishi mumkin.
+  Yakuniy tashxis HAMISHA shifokor tomonidan tasdiqlanishi shart!
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 8. .ENV SOZLAMALARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fayl: backend/.env
+
+  DATABASE_URL=postgresql+asyncpg://postgres:PAROL@localhost:5432/dermatology_db
+  DATABASE_SYNC_URL=postgresql://postgres:PAROL@localhost:5432/dermatology_db
+  JWT_SECRET_KEY=dermatology-secret-key-change-in-production-2024
+  ACCESS_TOKEN_EXPIRE_MINUTES=60
+  REFRESH_TOKEN_EXPIRE_DAYS=30
+  UPLOAD_DIR=uploads
+  MAX_UPLOAD_SIZE_MB=20
+  CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+
+DIQQAT: "PAROL" o'rniga PostgreSQL parolingizni yozing!
+  Standart parol: 8520
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 9. TEZKOR BAT FAYLLAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  setup-database.bat   → Migratsiya + 50 ta test bemor yuklash
+                         (Faqat birinchi marta ishlatiladi)
+
+  start-backend.bat    → Backend serverni ishga tushirish
+                         (Kutubxonalar ham tekshiriladi)
+                         Port: 8000
+
+  start-frontend.bat   → Frontend serverni ishga tushirish
+                         (node_modules mavjud bo'lmasa yuklanadi)
+                         Port: 3000
+
+ODDIY ISHLATISH (har kuni):
+  1. start-backend.bat  → birinchi oynada
+  2. start-frontend.bat → ikkinchi oynada
+  3. http://localhost:3000 → brauzerda
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 10. KO'P UCHRAYDIGAN XATOLAR VA YECHIMLARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  XATO: "connection refused" yoki "database error"
+  YECHIM: PostgreSQL xizmati ishlamoqdami?
+    → services.msc → postgresql → Start
+
+  XATO: "Email yoki parol noto'g'ri"
+  YECHIM: Backend ishlamoqdami?
+    → http://localhost:8000 brauzerda oching
+    → Agar javob yo'q bo'lsa start-backend.bat ni ishga tushiring
+
+  XATO: "Port 3000 already in use"
+  YECHIM: Eski Next.js jarayoni hali ishlamoqda
+    → Task Manager → node.exe → End Task
+
+  XATO: "Port 8000 already in use"
+  YECHIM: Eski uvicorn jarayoni ishlamoqda
+    → Task Manager → python.exe → End Task
+
+  XATO: Refresh qilganda login sahifasiga o'tib ketadi
+  YECHIM: Bu tuzatilgan. Agar bo'lsa:
+    → F12 → Application → Local Storage → auth-storage o'chiring
+    → Qayta kiring
+
+  XATO: PDF yuklanmaydi
+  YECHIM: Backend 8000 portda ishlayotgan bo'lishi kerak
+    → Birinchi marta 2-3 soniya kuting
+
+  XATO: AI tahlil "xato"
+  YECHIM: Backend ishlamoqdami va model yukladimi?
+    → http://localhost:8000/api/v1/ai/model-info ni tekshiring
+    → "loaded": true bo'lishi kerak
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 11. BACKEND ICHKI TUZILMA (Dasturchilar uchun)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+backend/app/ ichidagi asosiy fayllar:
+
+  main.py
+    → FastAPI ilovasi, CORS, static fayllar, router qo'shish
+    → Startup: AI model yuklanadi
+
+  config.py
+    → .env fayldan barcha sozlamalar o'qiladi
+    → DATABASE_URL, JWT_SECRET_KEY va b.
+
+  database.py
+    → Async SQLAlchemy engine va session
+
+  dependencies.py
+    → get_current_user() — JWT tokenni tekshiradi
+    → require_roles() — rol tekshiruvi
+
+  models/
+    user.py        → Foydalanuvchilar jadvali
+    patient.py     → Bemorlar jadvali
+    diagnosis.py   → Tashxislar jadvali
+    skin_image.py  → Teri rasmlari jadvali
+    ai_result.py   → AI natijalar jadvali
+    appointment.py → Qabullar jadvali
+    audit_log.py   → Audit log jadvali
+    report.py      → Hisobotlar jadvali
+
+  routers/
+    auth.py        → /auth/* endpointlar
+    patients.py    → /patients/* endpointlar
+    diagnoses.py   → /diagnoses/* endpointlar
+    images.py      → /images/* endpointlar
+    ai.py          → /ai/* endpointlar
+    dashboard.py   → /dashboard/* endpointlar
+    reports.py     → /reports/* endpointlar
+    appointments.py → /appointments/* endpointlar
+    users.py       → /users/* endpointlar (admin)
+
+  ai/
+    predictor.py    → Asosiy AI predictor (HuggingFace + rang tahlili)
+    ham10000_labels.py → 7 sinf ma'lumotlari (uz/ru/en)
+    model.py        → EfficientNet-B4 arxitekturasi (zaxira)
+    preprocessor.py → Rasm tayyorlash
+
+  services/
+    report_service.py → ReportLab bilan PDF yaratish
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 12. FRONTEND ICHKI TUZILMA (Dasturchilar uchun)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+frontend/src/ ichidagi asosiy fayllar:
+
+  app/layout.tsx
+    → Root layout, AntdRegistry, i18n, QueryClient
+
+  app/(auth)/login/page.tsx
+    → Login sahifasi (chap panel + o'ng forma)
+
+  app/(dashboard)/layout.tsx
+    → Dashboard layout (sidebar + header)
+    → Auth tekshiruvi, hydration kutish
+
+  app/(dashboard)/dashboard/page.tsx
+    → Bosh sahifa: stat kartalar, grafiklar, qabullar
+
+  app/(dashboard)/patients/page.tsx
+    → Bemorlar ro'yxati (qidiruv, jadval)
+
+  app/(dashboard)/patients/[id]/page.tsx
+    → Bemor profili (tabs: ma'lumotlar + tashxislar)
+
+  app/(dashboard)/patients/[id]/edit/page.tsx
+    → Bemor ma'lumotlarini tahrirlash
+
+  app/(dashboard)/patients/new/page.tsx
+    → Yangi bemor qo'shish
+
+  app/(dashboard)/diagnoses/page.tsx
+    → Tashxislar ro'yxati
+
+  app/(dashboard)/diagnoses/[id]/page.tsx
+    → Tashxis tafsiloti (rasm, AI natija, tahrirlash)
+
+  app/(dashboard)/diagnoses/new/page.tsx
+    → Yangi tashxis qo'shish
+
+  app/(dashboard)/ai-analysis/page.tsx
+    → AI tahlil sahifasi (upload + natija)
+
+  app/(dashboard)/reports/page.tsx
+    → Hisobotlar (yaratish + yuklab olish)
+
+  app/(dashboard)/appointments/page.tsx
+    → Qabullar jadvali
+
+  app/(dashboard)/admin/page.tsx
+    → Foydalanuvchilar boshqaruvi
+
+  lib/api.ts
+    → Axios client + barcha API metodlar
+    → Token avtomatik qo'shiladi
+    → 401 da token yangilanadi
+
+  store/authStore.ts
+    → Zustand: foydalanuvchi ma'lumotlari
+    → localStorage da saqlanadi (refresh'dan keyin ham ishlaydi)
+
+  public/locales/
+    uz/translation.json → O'zbek tarjimalar
+    ru/translation.json → Rus tarjimalar
+    en/translation.json → Ingliz tarjimalar
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 13. TEST MA'LUMOTLARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tizimda mavjud test ma'lumotlar:
+  → 50 ta real o'zbek ismli bemor
+  → 64 ta tashxis (ICD-10 kodlar bilan)
+  → 8 ta bugungi qabul
+  → 4 ta foydalanuvchi (admin, 2 shifokor, 1 hamshira)
+
+Test ma'lumotlarni qayta yuklash:
+  cd backend
+  venv\Scripts\python seed.py
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Savollar uchun: GitHub Issues yoki loyiha rahbariga murojaat
+
+================================================================
+  © 2026 Dermatologik Tashxis Axborot Tizimi — Diplom loyihasi
+================================================================

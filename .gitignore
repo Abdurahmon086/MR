@@ -1,0 +1,30 @@
+# ===== BACKEND =====
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/.env
+backend/uploads/
+backend/ai_models/
+backend/logs/
+*.egg-info/
+.pytest_cache/
+
+# ===== FRONTEND =====
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env.production
+
+# ===== SYSTEM =====
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# ===== IDE =====
+.vscode/settings.json
+.idea/
+*.suo
+*.user

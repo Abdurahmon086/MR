@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(git commit -m ' *)",
+      "Bash(findstr \":8000\")",
+      "Bash(tasklist /FI \"PID eq 18884\")",
+      "PowerShell(Get-Process -Id 18884 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue)",
+      "Bash(git push *)",
+      "Bash(git checkout *)"
+    ]
+  }
+}

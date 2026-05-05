@@ -1,0 +1,81 @@
+{
+  "app": { "title": "Dermatologik Tashxis Tizimi", "subtitle": "Teri kasalliklari diagnostikasi" },
+  "auth": {
+    "login": "Tizimga kirish", "email": "Elektron pochta", "password": "Parol",
+    "loginBtn": "Kirish", "logout": "Chiqish", "loginError": "Email yoki parol noto'g'ri"
+  },
+  "menu": {
+    "dashboard": "Bosh sahifa", "patients": "Bemorlar", "diagnoses": "Tashxislar",
+    "aiAnalysis": "AI Tahlil", "reports": "Hisobotlar", "appointments": "Qabullar", "admin": "Admin"
+  },
+  "dashboard": {
+    "title": "Bosh sahifa", "totalPatients": "Jami bemorlar", "totalDiagnoses": "Jami tashxislar",
+    "aiAnalyses": "AI tahlillar", "todayAppointments": "Bugungi qabullar",
+    "newThisMonth": "Bu oy yangi bemorlar", "recentActivity": "Oxirgi faoliyat",
+    "classDist": "AI tashxis taqsimoti", "ageDist": "Yosh taqsimoti"
+  },
+  "patients": {
+    "title": "Bemorlar", "add": "Bemor qo'shish", "search": "Qidirish (ism, kod, telefon)...",
+    "code": "Bemor kodi", "fullName": "F.I.O.", "birthDate": "Tug'ilgan sana", "age": "Yosh",
+    "gender": "Jins", "phone": "Telefon", "region": "Viloyat", "doctor": "Shifokor",
+    "male": "Erkak", "female": "Ayol", "actions": "Amallar", "edit": "Tahrirlash",
+    "delete": "O'chirish", "deleteConfirm": "Bemor o'chirilsinmi?",
+    "noPatients": "Bemorlar topilmadi", "info": "Asosiy ma'lumotlar",
+    "allergies": "Allergiyalar", "chronicDiseases": "Surunkali kasalliklar",
+    "assignedDoctor": "Biriktirilgan shifokor", "notes": "Izohlar",
+    "saveSuccess": "Bemor saqlandi", "updateSuccess": "Bemor yangilandi"
+  },
+  "diagnoses": {
+    "title": "Tashxislar", "add": "Yangi tashxis", "code": "Tashxis kodi",
+    "visitDate": "Qabul sanasi", "complaint": "Shikoyat", "diagnosisText": "Tashxis",
+    "severity": "Og'irlik darajasi", "status": "Holat", "treatment": "Davolash rejasi",
+    "followUp": "Keyingi qabul", "icd10": "ICD-10 kod",
+    "mild": "Yengil", "moderate": "O'rtacha", "severe": "Og'ir", "critical": "Juda og'ir",
+    "initial": "Dastlabki", "confirmed": "Tasdiqlangan", "revised": "Qayta ko'rilgan", "closed": "Yopilgan",
+    "aiAssisted": "AI yordamida"
+  },
+  "ai": {
+    "title": "AI Tahlil", "uploadImage": "Teri rasmini yuklang",
+    "uploadHint": "JPEG, PNG formatlar. Maksimal 20MB",
+    "selectPatient": "Bemorni tanlang", "analyze": "Tahlil qilish",
+    "analyzing": "Tahlil qilinmoqda...", "result": "Tahlil natijasi",
+    "confidence": "Ishonch darajasi", "allProbs": "Barcha sinflar ehtimolligi",
+    "riskLevel": "Xavf darajasi", "icd10": "ICD-10 kod", "description": "Tavsif",
+    "agreeBtn": "Roziman", "disagreeBtn": "Rozimas", "doctorNotes": "Doktor izohi",
+    "submitReview": "Baholashni saqlash",
+    "risk": {
+      "critical": "JUDA XAVFLI — Darhol shifokorga!",
+      "high": "Xavfli — Mutaxassisga ko'rining",
+      "medium": "O'rtacha xavf — Nazorat kerak",
+      "low": "Past xavf — Kuzatib boring"
+    },
+    "classes": {
+      "mel": "Melanoma", "nv": "Melanositar nevus", "bcc": "Bazal hujayra karsinomasi",
+      "akiec": "Aktinik keratoz", "bkl": "Xavfsiz keratoz", "df": "Dermatofibroma", "vasc": "Qon-tomir shikastlanishi"
+    },
+    "noModel": "AI model yuklanmagan (demo rejim)"
+  },
+  "reports": {
+    "title": "Hisobotlar", "generate": "Hisobot yaratish", "download": "Yuklab olish",
+    "type": "Hisobot turi", "patientSummary": "Bemor xulosasi", "statistics": "Statistika",
+    "generating": "Yaratilmoqda...", "ready": "Tayyor", "failed": "Xato",
+    "selectPatient": "Bemorni tanlang", "dateRange": "Sana oralig'i"
+  },
+  "appointments": {
+    "title": "Qabullar", "add": "Qabul qo'shish", "scheduled": "Rejalashtirilgan",
+    "confirmed": "Tasdiqlangan", "completed": "Tugallangan", "cancelled": "Bekor qilingan",
+    "initial": "Dastlabki", "follow_up": "Takroriy", "today": "Bugungi qabullar"
+  },
+  "admin": {
+    "title": "Boshqaruv", "users": "Foydalanuvchilar", "addUser": "Foydalanuvchi qo'shish",
+    "role": "Rol", "admin": "Admin", "doctor": "Shifokor", "nurse": "Hamshira"
+  },
+  "common": {
+    "save": "Saqlash", "cancel": "Bekor qilish", "close": "Yopish", "back": "Orqaga",
+    "edit": "Tahrirlash", "delete": "O'chirish", "add": "Qo'shish",
+    "loading": "Yuklanmoqda...", "error": "Xato yuz berdi", "success": "Muvaffaqiyatli",
+    "confirm": "Tasdiqlash", "total": "Jami", "actions": "Amallar", "view": "Ko'rish",
+    "noData": "Ma'lumot yo'q", "required": "Majburiy maydon",
+    "uzbek": "O'zbek", "russian": "Русский", "english": "English"
+  }
+}
