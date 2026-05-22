@@ -83,6 +83,7 @@ export const aiApi = {
   review: (resultId: string, data: object) => api.patch(`/ai/results/${resultId}/review`, null, { params: data }),
   statistics: () => api.get("/ai/statistics"),
   modelInfo: () => api.get("/ai/model-info"),
+  patientResults: (patientId: string) => api.get(`/ai/patient/${patientId}/results`),
 };
 
 // Dashboard

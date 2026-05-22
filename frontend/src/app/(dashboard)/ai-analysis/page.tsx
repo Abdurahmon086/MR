@@ -4,7 +4,7 @@ import { Card, Button, Select, Upload, Typography, Alert, Progress, Tag, Space, 
 import { InboxOutlined, RobotOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { patientsApi, imagesApi, aiApi } from "@/lib/api";
 import type { AIResult } from "@/types";
 
@@ -26,6 +26,7 @@ const CLASS_COLORS: Record<string, string> = {
 function AIAnalysisContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const defaultPatientId = searchParams.get("patient_id") || undefined;
 
   const [patientId, setPatientId] = useState<string | undefined>(defaultPatientId);
@@ -221,19 +222,29 @@ function AIAnalysisContent() {
                 <Text strong style={{ display: "block", marginBottom: 8 }}>Doktor baholashi:</Text>
 
                 {reviewed ? (
-                  <Alert
-                    type={reviewed.agreement ? "success" : "error"}
-                    showIcon
-                    icon={reviewed.agreement ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
-                    message={reviewed.agreement ? "Siz AI natijasiga rozisiz" : "Siz AI natijasiga rozi emassiz"}
-                    description={reviewed.notes ? `Izoh: ${reviewed.notes}` : undefined}
-                    style={{ borderRadius: 8 }}
-                    action={
-                      <Button size="small" onClick={() => setReviewed(null)}>
-                        O'zgartirish
-                      </Button>
-                    }
-                  />
+                  <div>
+                    <Alert
+                      type={reviewed.agreement ? "success" : "error"}
+                      showIcon
+                      icon={reviewed.agreement ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+                      message={reviewed.agreement ? "✓ Natija tasdiqlandi" : "✗ Natija rad etildi"}
+                      description={reviewed.notes ? `Izoh: ${reviewed.notes}` : undefined}
+                      style={{ borderRadius: 8, marginBottom: 12 }}
+                      action={
+                        <Button size="small" onClick={() => setReviewed(null)}>
+                          O'zgartirish
+                        </Button>
+                      }
+                    />
+                    <Button
+                      type="primary"
+                      block
+                      onClick={() => router.push(`/patients/${patientId}?tab=ai`)}
+                      style={{ borderRadius: 8 }}
+                    >
+                      Bemorning barcha AI tahlillarini ko'rish →
+                    </Button>
+                  </div>
                 ) : (
                   <>
                     <Input.TextArea

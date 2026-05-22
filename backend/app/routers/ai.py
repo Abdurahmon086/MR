@@ -149,6 +149,42 @@ async def review_result(
     return ai
 
 
+@router.get("/patient/{patient_id}/results")
+async def get_patient_ai_results(
+    patient_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(get_current_user),
+):
+    result = await db.execute(
+        select(AIResult, SkinImage)
+        .join(SkinImage, AIResult.image_id == SkinImage.id)
+        .where(SkinImage.patient_id == patient_id)
+        .order_by(AIResult.created_at.desc())
+    )
+    rows = result.all()
+    return [
+        {
+            "id": str(ai.id),
+            "image_id": str(ai.image_id),
+            "predicted_class": ai.predicted_class,
+            "predicted_label": ai.predicted_label,
+            "confidence": ai.confidence,
+            "risk_level": ai.risk_level,
+            "all_probabilities": ai.all_probabilities,
+            "is_reviewed": ai.is_reviewed,
+            "doctor_agreement": ai.doctor_agreement,
+            "doctor_notes": ai.doctor_notes,
+            "model_version": ai.model_version,
+            "processing_time_ms": ai.processing_time_ms,
+            "created_at": ai.created_at.isoformat() if ai.created_at else None,
+            "reviewed_at": ai.reviewed_at.isoformat() if ai.reviewed_at else None,
+            "image_path": img.file_path,
+            "thumbnail_path": img.thumbnail_path,
+        }
+        for ai, img in rows
+    ]
+
+
 @router.get("/statistics")
 async def ai_statistics(
     db: AsyncSession = Depends(get_db),
