@@ -11,7 +11,13 @@
       "PowerShell(Get-Process -Id 18884 -ErrorAction SilentlyContinue)",
       "PowerShell(Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue)",
       "Bash(git push *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git commit -m 'Admin panel: specialty dropdown by role, hard delete users *)",
+      "Bash(start \"Backend - FastAPI\" cmd /k \"venv\\\\Scripts\\\\uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\")",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\")",
+      "Bash(ping -n 6 127.0.0.1)",
+      "Bash(git commit -m 'Frontend port 3001, backend port 8001, add .env template *)",
+      "Bash(git commit -m 'Fix pie chart: move labels below chart as legend rows *)"
     ]
   }
 }
