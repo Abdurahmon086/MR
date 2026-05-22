@@ -126,7 +126,7 @@ echo   Hammasi tayyor! Serverlar ishga tushmoqda
 echo  ==========================================
 echo.
 echo   Backend:  http://localhost:8001/docs
-echo   Frontend: http://localhost:3000
+echo   Frontend: http://localhost:3001
 echo   Login:    admin@derm.uz / Admin1234!
 echo.
 echo  Ikkita konsol oynasi ochiladi...
@@ -138,7 +138,7 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8001 " ^| findstr "LISTENIN
     taskkill /F /PID %%a >nul 2>&1
 )
 :: Port 3000 ni tozalash
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":3000 " ^| findstr "LISTENING" 2^>nul') do (
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":3001 " ^| findstr "LISTENING" 2^>nul') do (
     taskkill /F /PID %%a >nul 2>&1
 )
 

@@ -16,11 +16,10 @@ if not exist "node_modules" (
 
 echo [2/2] Frontend serveri ishga tushirilmoqda...
 echo.
-echo  Sayt: http://localhost:3000
+echo  Sayt: http://localhost:3001
 echo.
 
-:: Port 3000 band bo'lsa eski process o'ldiriladi
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":3000 " ^| findstr "LISTENING" 2^>nul') do (
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":3001 " ^| findstr "LISTENING" 2^>nul') do (
     taskkill /F /PID %%a >nul 2>&1
 )
 
