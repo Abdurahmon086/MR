@@ -90,18 +90,40 @@ export default function DashboardPage() {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {/* AI Class Distribution Pie */}
         <Col xs={24} lg={12}>
-          <Card title={t("dashboard.classDist")} style={{ borderRadius: 12, height: 340 }}>
+          <Card title={t("dashboard.classDist")} style={{ borderRadius: 12 }}>
             {pieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie data={pieData} dataKey="count" nameKey="label" cx="50%" cy="50%" outerRadius={90} label={({ label, percent }) => `${label} ${(percent * 100).toFixed(0)}%`}>
-                    {pieData.map((entry: any) => (
-                      <Cell key={entry.class} fill={CLASS_COLORS[entry.class] || "#1890FF"} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      dataKey="count"
+                      nameKey="label"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={85}
+                      label={false}
+                    >
+                      {pieData.map((entry: any) => (
+                        <Cell key={entry.class} fill={CLASS_COLORS[entry.class] || "#1890FF"} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: any, name: any) => [value, name]} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginTop: 8, padding: "0 8px" }}>
+                  {pieData.map((entry: any) => {
+                    const total = pieData.reduce((s: number, d: any) => s + d.count, 0);
+                    const pct = total > 0 ? ((entry.count / total) * 100).toFixed(0) : 0;
+                    return (
+                      <div key={entry.class} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
+                        <span style={{ width: 10, height: 10, borderRadius: 2, background: CLASS_COLORS[entry.class] || "#1890FF", flexShrink: 0 }} />
+                        <span style={{ color: "#555" }}>{entry.label} <strong>{pct}%</strong></span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             ) : (
               <Empty description="Ma'lumot yo'q" style={{ paddingTop: 40 }} />
             )}
