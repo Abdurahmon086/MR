@@ -26,13 +26,13 @@ if not exist "ai_models" mkdir ai_models
 
 echo [4/4] Backend serveri ishga tushirilmoqda...
 echo.
-echo  API:     http://localhost:8000
-echo  Swagger: http://localhost:8000/docs
+echo  API:     http://localhost:8001
+echo  Swagger: http://localhost:8001/docs
 echo.
 
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8000 " ^| findstr "LISTENING" 2^>nul') do (
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8001 " ^| findstr "LISTENING" 2^>nul') do (
     taskkill /F /PID %%a >nul 2>&1
 )
 
-venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 pause

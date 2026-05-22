@@ -125,7 +125,7 @@ echo  ==========================================
 echo   Hammasi tayyor! Serverlar ishga tushmoqda
 echo  ==========================================
 echo.
-echo   Backend:  http://localhost:8000/docs
+echo   Backend:  http://localhost:8001/docs
 echo   Frontend: http://localhost:3000
 echo   Login:    admin@derm.uz / Admin1234!
 echo.
@@ -134,7 +134,7 @@ echo.
 timeout /t 2 /nobreak >nul
 
 :: Port 8000 ni tozalash
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8000 " ^| findstr "LISTENING" 2^>nul') do (
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8001 " ^| findstr "LISTENING" 2^>nul') do (
     taskkill /F /PID %%a >nul 2>&1
 )
 :: Port 3000 ni tozalash
@@ -142,7 +142,7 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":3000 " ^| findstr "LISTENIN
     taskkill /F /PID %%a >nul 2>&1
 )
 
-start "Backend - FastAPI" cmd /k "cd /d "%BACKEND%" && venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+start "Backend - FastAPI" cmd /k "cd /d "%BACKEND%" && venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload"
 timeout /t 3 /nobreak >nul
 start "Frontend - Next.js" cmd /k "cd /d "%FRONTEND%" && npm run dev"
 
